@@ -15,37 +15,23 @@ const getAllUsers = async (req, res) => {
         const totalCount = await prisma_1.default.user.count({
             where: user.role === 'WRITER' ? { role: 'WRITER' } : undefined
         });
+        const isPublicRoute = req.path.includes('/public');
         const users = await prisma_1.default.user.findMany({
-            where: user.role === 'WRITER' ? { role: 'WRITER' } : undefined,
-            select: {
-                id: true,
-                username: true,
-                role: true,
-                createdAt: true,
-                createdBy: {
-                    select: {
-                        username: true
-                    }
+            where: user.role === 'WRITER' && !isPublicRoute ? { role: 'WRITER' } : undefined,
+            select: isPublicRoute
+                ? { id: true, username: true }
+                : {
+                    id: true,
+                    username: true,
+                    role: true,
+                    createdAt: true,
+                    createdBy: { select: { username: true } },
+                    posts: { select: { id: true, title: true, createdAt: true } },
+                    _count: { select: { posts: true, comments: true } },
                 },
-                posts: {
-                    select: {
-                        id: true,
-                        title: true,
-                        createdAt: true
-                    }
-                },
-                _count: {
-                    select: {
-                        posts: true,
-                        comments: true
-                    }
-                }
-            },
-            orderBy: {
-                createdAt: 'desc'
-            },
+            orderBy: { createdAt: 'desc' },
             skip,
-            take: limit
+            take: limit,
         });
         res.json({
             users,

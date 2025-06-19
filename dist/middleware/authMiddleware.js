@@ -34,6 +34,7 @@ exports.authenticateToken = authenticateToken;
 const authorizeRole = (roles) => {
     return (req, res, next) => {
         const userRole = req.user.role;
+        console.log('authorizeRole Debug: userRole =', userRole, 'allowedRoles =', roles);
         if (!roles.includes(userRole)) {
             res.status(403).json({
                 message: `Access denied. Required role: ${roles.join(' or ')}`

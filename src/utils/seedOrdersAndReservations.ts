@@ -25,15 +25,15 @@ const seedOrdersAndReservations = async () => {
       data: [
         {
           customerId: 1,
-          date: new Date('2025-06-20'),
-          time: '18:00',
-          guests: 4,
+          reservedAt: new Date('2025-06-20T18:00:00'),
+          numberOfGuests: 4,
+          tableNumber: 1,
         },
         {
           customerId: 2,
-          date: new Date('2025-06-21'),
-          time: '19:00',
-          guests: 2,
+          reservedAt: new Date('2025-06-21T19:00:00'),
+          numberOfGuests: 2,
+          tableNumber: 2,
         },
       ],
     });
