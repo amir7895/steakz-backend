@@ -28,7 +28,7 @@ const prisma = new PrismaClient();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:3000', // Replace with your frontend's URL
+  origin: process.env.FRONTEND_URL || 'https://myapp-frontend.onrender.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 })); // Add CORS support
