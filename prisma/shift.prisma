@@ -1,0 +1,8 @@
+// Shift model for Steakz restaurant
+model Shift {
+  id          Int      @id @default(autoincrement())
+  staffId     Int
+  staff       Staff    @relation(fields: [staffId], references: [id])
+  startTime   DateTime
+  endTime     DateTime
+}

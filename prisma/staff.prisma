@@ -1,0 +1,9 @@
+// Staff model for Steakz restaurant
+model Staff {
+  id          Int      @id @default(autoincrement())
+  name        String
+  role        String
+  shift       Shift[]
+  attendance  Attendance[]
+  performance Performance[]
+}

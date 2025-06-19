@@ -1,0 +1,12 @@
+// Order model for Steakz restaurant
+model Order {
+  id          Int      @id @default(autoincrement())
+  customerId  Int?
+  customer    User?    @relation(fields: [customerId], references: [id])
+  items       MenuItem[]
+  type        String   // dine-in or takeaway
+  status      String   // pending, completed, cancelled
+  total       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
