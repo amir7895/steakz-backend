@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import prisma from '../utils/prisma';
 import dotenv from 'dotenv';
-import { Role } from '@prisma/client'; // Import Role enum
 import Joi from 'joi';
 
 import { comparePassword, hashPassword } from '../utils/hash';
