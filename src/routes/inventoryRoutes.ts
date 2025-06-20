@@ -9,14 +9,21 @@ router.get('/', authenticateToken, authorizeRole(['ADMIN']), getInventory);
 router.put('/:id', authenticateToken, authorizeRole(['ADMIN']), updateInventory);
 router.post('/', authenticateToken, authorizeRole(['ADMIN']), async (req, res) => {
   try {
-    console.log('Incoming inventory data:', req.body);
+    const { itemName, quantity, threshold, branchId } = req.body;
+
+    if (!itemName || !quantity || !threshold || !branchId) {
+      res.status(400).json({ error: 'itemName, quantity, threshold, and branchId are required' });
+      return;
+    }
+
     const newItem = await prisma.inventory.create({
-      data: req.body,
+      data: { itemName, quantity, threshold, branchId },
     });
     res.status(201).json(newItem);
-  } catch (error) {
-    console.error('Failed to add inventory item:', error);
-    res.status(500).json({ error: 'Failed to add inventory item' });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Failed to add inventory item:', errorMessage);
+    res.status(500).json({ error: 'Failed to add inventory item', details: errorMessage });
   }
 });
 

@@ -7,7 +7,8 @@ import {
     adminChangeRole,
     adminDeleteUser
 } from '../controllers/userController';
-import { authenticateToken, authorizeRole } from '../middleware/authMiddleware';
+import { authenticateToken } from '../middleware/authMiddleware';
+import verifyAdmin from '../middleware/verifyAdmin';
 
 const router = Router();
 
@@ -19,11 +20,17 @@ router.get('/:id', authenticateToken, getUserById);            // View user deta
 router.get('/public', getAllUsers);
 
 // Admin routes - require authentication and admin role
-// Using properly chained middleware functions
-router.use('/admin', authenticateToken, authorizeRole(['ADMIN']));  // Protect all admin routes
+router.use('/admin', authenticateToken, verifyAdmin as any);  // Protect all admin routes
 
 // Group all admin routes
-router.post('/', adminCreateUser);         // Create new user
+router.post('/', (req, res, next) => {
+  const { branchId } = req.body;
+  if (!branchId) {
+    res.status(400).json({ error: 'branchId is required' });
+    return;
+  }
+  next();
+}, adminCreateUser);         // Create new user
 router.put('/:id', adminUpdateUser);       // Update user details
 router.patch('/:id/role', adminChangeRole); // Change user role
 router.delete('/:id', adminDeleteUser);     // Delete user

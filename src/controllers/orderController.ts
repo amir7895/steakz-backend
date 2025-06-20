@@ -31,7 +31,6 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
   try {
     console.log('Received request to create order');
     console.log('Request Body:', req.body); // Log the incoming request body
-    console.log('Incoming Request:', req.method, req.url, req.body);
 
     // Validate the request body
     const { error, value } = orderSchema.validate(req.body);
@@ -43,6 +42,13 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
     const { customerId, type, status, total, items } = value;
     console.log('Validated request body:', { customerId, type, status, total, items }); // Log validated data
+
+    // Check if the customer exists
+    const customerExists = await prisma.user.findUnique({ where: { id: customerId } });
+    if (!customerExists) {
+      res.status(400).json({ error: 'Customer does not exist' });
+      return;
+    }
 
     // Create the order
     const order = await prisma.order.create({

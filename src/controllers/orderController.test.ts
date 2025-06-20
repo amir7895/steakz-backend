@@ -48,5 +48,7 @@ afterAll(async () => {
   await prisma.$disconnect();
 
   const { server } = require('../index');
-  server.close();
+  if (server && server.close) {
+    await new Promise((resolve) => server.close(resolve));
+  }
 });

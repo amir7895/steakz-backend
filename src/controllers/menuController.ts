@@ -14,12 +14,22 @@ export const getMenuItems = async (req: Request, res: Response) => {
   }
 };
 
-export const createMenuItem = async (req: Request, res: Response) => {
+export const createMenuItem = async (req: Request, res: Response): Promise<void> => {
   try {
-    const item = await prisma.menuItem.create({ data: req.body });
+    const { name, description, price, branchId } = req.body;
+
+    if (!name || !description || !price || !branchId) {
+      res.status(400).json({ error: 'Name, description, price, and branchId are required' });
+      return;
+    }
+
+    const item = await prisma.menuItem.create({
+      data: { name, description, price, branchId },
+    });
     res.status(201).json(item);
-  } catch (err) {
-    res.status(400).json({ error: 'Failed to create menu item' });
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+    res.status(400).json({ error: 'Failed to create menu item', details: errorMessage });
   }
 };
 

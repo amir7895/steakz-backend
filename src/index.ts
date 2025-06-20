@@ -13,6 +13,8 @@ import feedbackRoutes from './routes/feedbackRoutes';
 import loyaltyRoutes from './routes/loyaltyRoutes';
 import attendanceRoutes from './routes/attendanceRoutes';
 import reservationRoutes from './routes/reservationRoutes';
+import branchRoutes from './routes/branchRoutes';
+import exportRoutes from './routes/exportRoutes';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { seedAdminUser, seedManagerUser } from './utils/seedAdmin';
@@ -68,6 +70,8 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/loyalty', loyaltyRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/reservations', reservationRoutes);
+app.use('/api/branches', branchRoutes);
+app.use('/api/export', exportRoutes);
 
 // Add the error handling middleware at the end of all routes
 app.use(errorHandler);

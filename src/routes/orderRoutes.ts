@@ -3,7 +3,13 @@ import { getOrders, createOrder, updateOrder, deleteOrder } from '../controllers
 
 const router = Router();
 
-router.get('/', getOrders);
+router.get('/', (req, _res, next) => {
+  const { branchId } = req.query;
+  if (branchId) {
+    req.query.filter = { branchId };
+  }
+  next();
+}, getOrders);
 router.post('/create', createOrder);
 router.put('/:id', updateOrder);
 router.delete('/:id', deleteOrder);

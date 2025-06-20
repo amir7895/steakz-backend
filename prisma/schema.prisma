@@ -24,6 +24,8 @@ model User {
   reservations   Reservation[]  @relation("UserReservations")
   createdBy     User?          @relation("UserCreator", fields: [createdById], references: [id])
   createdUsers  User[]         @relation("UserCreator")
+  branchId      Int?
+  branch        Branch?        @relation(fields: [branchId], references: [id])
 }
 
 model Post {
@@ -63,6 +65,8 @@ model MenuItem {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   orders       Order[]  @relation("MenuItemToOrder")
+  branchId     Int?
+  branch       Branch?  @relation(fields: [branchId], references: [id])
 }
 
 model Order {
@@ -75,6 +79,8 @@ model Order {
   updatedAt  DateTime   @updatedAt
   customer   User?      @relation("UserOrders", fields: [customerId], references: [id])
   items      MenuItem[] @relation("MenuItemToOrder")
+  branchId   Int?
+  branch     Branch?    @relation(fields: [branchId], references: [id])
 }
 
 model Inventory {
@@ -84,6 +90,8 @@ model Inventory {
   threshold Int
   waste     Int      @default(0)
   updatedAt DateTime @updatedAt
+  branchId  Int?
+  branch    Branch?  @relation(fields: [branchId], references: [id])
 }
 
 model Staff {
@@ -153,6 +161,16 @@ model Reservation {
   numberOfGuests  Int
   specialRequests String?
   customer         User?      @relation("UserReservations", fields: [customerId], references: [id])
+}
+
+model Branch {
+  id       Int      @id @default(autoincrement())
+  name     String
+  location String
+  users    User[]
+  orders   Order[]
+  menuItems MenuItem[]
+  inventoryItems Inventory[]
 }
 
 enum Role {

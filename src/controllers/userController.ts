@@ -9,16 +9,23 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
         const skip = (page - 1) * limit;
-        
+        const branchId = req.query.branchId ? parseInt(req.query.branchId as string, 10) : undefined;
+
         // Get total count for pagination
         const totalCount = await prisma.user.count({
-            where: user.role === 'WRITER' ? { role: 'WRITER' } : undefined
+            where: {
+                ...(user.role === 'WRITER' ? { role: 'WRITER' } : {}),
+                ...(branchId ? { branchId } : {}),
+            },
         });
 
         const isPublicRoute = req.path.includes('/public');
 
         const users = await prisma.user.findMany({
-            where: user.role === 'WRITER' && !isPublicRoute ? { role: 'WRITER' } : undefined,
+            where: {
+                ...(user.role === 'WRITER' && !isPublicRoute ? { role: 'WRITER' } : {}),
+                ...(branchId ? { branchId } : {}),
+            },
             select: isPublicRoute
                 ? { id: true, username: true } // Simplified fields for public route
                 : {
@@ -41,12 +48,13 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
                 total: totalCount,
                 page,
                 limit,
-                totalPages: Math.ceil(totalCount / limit)
-            }
+                totalPages: Math.ceil(totalCount / limit),
+            },
         });
-    } catch (error) {
-        console.error('Error in getAllUsers:', error);
-        res.status(500).json({ message: 'Error fetching users' });
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Error in getAllUsers:', errorMessage);
+        res.status(500).json({ error: 'Failed to fetch users', details: errorMessage });
     }
 };
 
