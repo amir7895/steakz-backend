@@ -13,7 +13,7 @@ const port = process.env.PORT || 3001;
 const prisma = new PrismaClient();
 
 // Middleware
-const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = ['http://localhost:3000', 'https://steakz-frontend.onrender.com'];
 
 app.use(cors({
   origin: (origin, callback) => {
