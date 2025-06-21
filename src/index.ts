@@ -9,7 +9,7 @@ import { errorHandler } from './middleware/errorMiddleware';
 dotenv.config();
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 const prisma = new PrismaClient();
 
 // Middleware
@@ -55,7 +55,7 @@ let server;
 Promise.all([seedAdminUser(), seedManagerUser()])
   .then(() => {
     server = app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}`);
+      console.log(`✅ Server is running on port ${port}`);
     });
   })
   .catch((err) => {
