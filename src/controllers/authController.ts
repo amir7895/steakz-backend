@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import Joi from 'joi';
 import bcrypt from 'bcrypt';
 
-import { comparePassword, hashPassword } from '../utils/hash';
+import { comparePassword } from '../utils/hash';
 
 dotenv.config();
 
