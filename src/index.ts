@@ -13,10 +13,19 @@ const port = process.env.PORT || 3001;
 const prisma = new PrismaClient();
 
 // Middleware
+const allowedOrigin = 'https://steakz-frontend.onrender.com';
+
 app.use(cors({
-  origin: 'https://steakz-frontend.onrender.com',
+  origin: allowedOrigin,
   credentials: true,
 })); // Add CORS support
+
+// Handle preflight requests (important for CORS with credentials)
+app.options('*', cors({
+  origin: allowedOrigin,
+  credentials: true,
+}));
+
 app.use(express.json());
 
 // Add logging middleware to debug incoming requests
