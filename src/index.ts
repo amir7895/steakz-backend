@@ -1,20 +1,4 @@
 import express, { Request, Response } from 'express';
-import userRoutes from './routes/userRoutes';
-import postRoutes from './routes/postRoutes';
-import commentRoutes from './routes/commentRoutes';
-import authRoutes from './routes/authRoutes';
-import menuRoutes from './routes/menuRoutes';
-import orderRoutes from './routes/orderRoutes';
-import inventoryRoutes from './routes/inventoryRoutes';
-import staffRoutes from './routes/staffRoutes';
-import financialRoutes from './routes/financialRoutes';
-import analyticsRoutes from './routes/analyticsRoutes';
-import feedbackRoutes from './routes/feedbackRoutes';
-import loyaltyRoutes from './routes/loyaltyRoutes';
-import attendanceRoutes from './routes/attendanceRoutes';
-import reservationRoutes from './routes/reservationRoutes';
-import branchRoutes from './routes/branchRoutes';
-import exportRoutes from './routes/exportRoutes';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { seedAdminUser, seedManagerUser } from './utils/seedAdmin';
@@ -29,9 +13,16 @@ const port = 3001;
 const prisma = new PrismaClient();
 
 // Middleware
+const allowedOrigins = ['http://localhost:3000'];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://myapp-frontend.onrender.com',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 })); // Add CORS support
 app.use(express.json());
@@ -54,24 +45,6 @@ app.get('/debug-users', async (_req, res) => {
   });
   res.json(users);
 });
-
-// API routes
-app.use('/api/users', userRoutes);
-app.use('/api/posts', postRoutes);
-app.use('/api/comments', commentRoutes);
-app.use('/auth', authRoutes);
-app.use('/api/menu', menuRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/inventory', inventoryRoutes);
-app.use('/api/staff', staffRoutes);
-app.use('/api/financial', financialRoutes);
-app.use('/api/analytics', analyticsRoutes);
-app.use('/api/feedback', feedbackRoutes);
-app.use('/api/loyalty', loyaltyRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use('/api/reservations', reservationRoutes);
-app.use('/api/branches', branchRoutes);
-app.use('/api/export', exportRoutes);
 
 // Add the error handling middleware at the end of all routes
 app.use(errorHandler);
