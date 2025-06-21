@@ -13,16 +13,8 @@ const port = process.env.PORT || 3001;
 const prisma = new PrismaClient();
 
 // Middleware
-const allowedOrigins = ['http://localhost:3000', 'https://steakz-frontend.onrender.com'];
-
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: 'https://steakz-frontend.onrender.com',
   credentials: true,
 })); // Add CORS support
 app.use(express.json());
@@ -30,15 +22,6 @@ app.use(express.json());
 // Add logging middleware to debug incoming requests
 app.use((req, _, next) => {
   console.log(`Incoming Request: ${req.method} ${req.url}`);
-  next();
-});
-
-// Manually set CORS headers to fix issues with credentials
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   next();
 });
 
