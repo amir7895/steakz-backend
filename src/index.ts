@@ -33,6 +33,15 @@ app.use((req, _, next) => {
   next();
 });
 
+// Manually set CORS headers to fix issues with credentials
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  next();
+});
+
 // Homepage route
 app.get('/', (_req: Request, res: Response) => {
     res.send('Welcome to the homepage!');
