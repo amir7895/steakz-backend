@@ -12,7 +12,9 @@ dotenv.config();
 // Validation schema
 const signupSchema = Joi.object({
   username: Joi.string().min(3).required(),
-  password: Joi.string().min(8).required(),
+  name: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
   role: Joi.string().valid('WRITER', 'ADMIN', 'MANAGER', 'USER', 'STAFF').optional(),
 });
 
@@ -20,20 +22,13 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
   console.log('Sign-Up Request:', req.body);
 
   try {
-    const schema = Joi.object({
-      name: Joi.string().required(),
-      email: Joi.string().email().required(),
-      password: Joi.string().min(6).required(),
-      role: Joi.string().optional(),
-    });
-
-    const { error, value } = schema.validate(req.body);
+    const { error, value } = signupSchema.validate(req.body);
     if (error) {
       console.error('Validation error:', error.details[0].message);
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    const { name, email, password, role } = value;
+    const { username, name, email, password, role } = value;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -44,6 +39,7 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
+        username,
         name,
         email,
         password: hashedPassword,
@@ -51,7 +47,7 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
       },
     });
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
       expiresIn: '7d',
     });
 
