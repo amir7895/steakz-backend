@@ -13,18 +13,18 @@ const port = process.env.PORT || 3001;
 const prisma = new PrismaClient();
 
 // Middleware
-const allowedOrigins = ['https://steakz-frontend.onrender.com'];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: 'https://steakz-frontend.onrender.com',
+  methods: 'GET,POST,PUT,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-})); // Add CORS support
+}));
+
+// Manually respond to preflight requests
+app.options('*', cors({
+  origin: 'https://steakz-frontend.onrender.com',
+  credentials: true,
+}));
 
 app.use(express.json());
 
