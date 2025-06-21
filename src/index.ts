@@ -20,12 +20,6 @@ app.use(cors({
   credentials: true,
 })); // Add CORS support
 
-// Handle preflight requests (important for CORS with credentials)
-app.options('*', cors({
-  origin: allowedOrigin,
-  credentials: true,
-}));
-
 app.use(express.json());
 
 // Add logging middleware to debug incoming requests
